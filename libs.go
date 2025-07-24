@@ -17,15 +17,17 @@ package lua
 //
 // All libraries are implemented through the official Go API. Currently, Lua
 // has the following standard libraries:
-//  basic library
-//  package library
-//  string manipulation
-//  table manipulation
-//  mathematical functions (sin, log, etc.);
-//  bitwise operations
-//  input and output
-//  operating system facilities
-//  debug facilities
+//
+//	basic library
+//	package library
+//	string manipulation
+//	table manipulation
+//	mathematical functions (sin, log, etc.);
+//	bitwise operations
+//	input and output
+//	operating system facilities
+//	debug facilities
+//
 // Except for the basic and the package libraries, each library provides all
 // its functions as fields of a global table or as methods of its objects.
 func OpenLibraries(l *State, preloaded ...RegistryFunction) {
@@ -34,7 +36,7 @@ func OpenLibraries(l *State, preloaded ...RegistryFunction) {
 		{"package", PackageOpen},
 		// {"coroutine", CoroutineOpen},
 		{"table", TableOpen},
-		{"io", IOOpen},
+		//{"io", IOOpen},
 		{"os", OSOpen},
 		{"string", StringOpen},
 		{"bit32", Bit32Open},

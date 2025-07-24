@@ -1,10 +1,7 @@
 package lua
 
 import (
-	"io/ioutil"
 	"os"
-	"os/exec"
-	"syscall"
 	"time"
 )
 
@@ -32,63 +29,63 @@ var osLibrary = []RegistryFunction{
 	// From the Lua manual:
 	// "This function is equivalent to the ISO C function system"
 	// https://www.lua.org/manual/5.2/manual.html#pdf-os.execute
-	{"execute", func(l *State) int {
-		c := OptString(l, 1, "")
-
-		if c == "" {
-			// Check whether "sh" is available on the system.
-			err := exec.Command("sh").Run()
-			l.PushBoolean(err == nil)
-			return 1
-		}
-
-		terminatedSuccessfully := true
-		terminationReason := "exit"
-		terminationData := 0
-
-		// Create the command.
-		cmd := exec.Command("sh", "-c", c)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-
-		// Run the command.
-		if err := cmd.Run(); err != nil {
-			terminatedSuccessfully = false
-			terminationReason = "exit"
-			terminationData = 1
-
-			if exiterr, ok := err.(*exec.ExitError); ok {
-				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
-					if status.Signaled() {
-						terminationReason = "signal"
-						terminationData = int(status.Signal())
-					} else {
-						terminationData = status.ExitStatus()
-					}
-				} else {
-					// Unsupported system?
-				}
-			} else {
-				// From man 3 system:
-				// "If a child process could not be created, or its
-				// status could not be retrieved, the return value
-				// is -1."
-				terminationData = -1
-			}
-		}
-
-		// Deal with the return values.
-		if terminatedSuccessfully {
-			l.PushBoolean(true)
-		} else {
-			l.PushNil()
-		}
-
-		l.PushString(terminationReason)
-		l.PushInteger(terminationData)
-
-		return 3
-	}},
+	//{"execute", func(l *State) int {
+	//	c := OptString(l, 1, "")
+	//
+	//	if c == "" {
+	//		// Check whether "sh" is available on the system.
+	//		err := exec.Command("sh").Run()
+	//		l.PushBoolean(err == nil)
+	//		return 1
+	//	}
+	//
+	//	terminatedSuccessfully := true
+	//	terminationReason := "exit"
+	//	terminationData := 0
+	//
+	//	// Create the command.
+	//	cmd := exec.Command("sh", "-c", c)
+	//	cmd.Stdout = os.Stdout
+	//	cmd.Stderr = os.Stderr
+	//
+	//	// Run the command.
+	//	if err := cmd.Run(); err != nil {
+	//		terminatedSuccessfully = false
+	//		terminationReason = "exit"
+	//		terminationData = 1
+	//
+	//		if exiterr, ok := err.(*exec.ExitError); ok {
+	//			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+	//				if status.Signaled() {
+	//					terminationReason = "signal"
+	//					terminationData = int(status.Signal())
+	//				} else {
+	//					terminationData = status.ExitStatus()
+	//				}
+	//			} else {
+	//				// Unsupported system?
+	//			}
+	//		} else {
+	//			// From man 3 system:
+	//			// "If a child process could not be created, or its
+	//			// status could not be retrieved, the return value
+	//			// is -1."
+	//			terminationData = -1
+	//		}
+	//	}
+	//
+	//	// Deal with the return values.
+	//	if terminatedSuccessfully {
+	//		l.PushBoolean(true)
+	//	} else {
+	//		l.PushNil()
+	//	}
+	//
+	//	l.PushString(terminationReason)
+	//	l.PushInteger(terminationData)
+	//
+	//	return 3
+	//}},
 	{"exit", func(l *State) int {
 		var status int
 		if l.IsBoolean(1) {
@@ -104,9 +101,9 @@ var osLibrary = []RegistryFunction{
 		os.Exit(status)
 		panic("unreachable")
 	}},
-	{"getenv", func(l *State) int { l.PushString(os.Getenv(CheckString(l, 1))); return 1 }},
-	{"remove", func(l *State) int { name := CheckString(l, 1); return FileResult(l, os.Remove(name), name) }},
-	{"rename", func(l *State) int { return FileResult(l, os.Rename(CheckString(l, 1), CheckString(l, 2)), "") }},
+	//{"getenv", func(l *State) int { l.PushString(os.Getenv(CheckString(l, 1))); return 1 }},
+	//{"remove", func(l *State) int { name := CheckString(l, 1); return FileResult(l, os.Remove(name), name) }},
+	//{"rename", func(l *State) int { return FileResult(l, os.Rename(CheckString(l, 1), CheckString(l, 2)), "") }},
 	// {"setlocale", func(l *State) int {
 	// 	op := CheckOption(l, 2, "all", []string{"all", "collate", "ctype", "monetary", "numeric", "time"})
 	// 	l.PushString(setlocale([]int{LC_ALL, LC_COLLATE, LC_CTYPE, LC_MONETARY, LC_NUMERIC, LC_TIME}, OptString(l, 1, "")))
@@ -129,15 +126,15 @@ var osLibrary = []RegistryFunction{
 		}
 		return 1
 	}},
-	{"tmpname", func(l *State) int {
-		f, err := ioutil.TempFile("", "lua_")
-		if err != nil {
-			Errorf(l, "unable to generate a unique filename")
-		}
-		defer f.Close()
-		l.PushString(f.Name())
-		return 1
-	}},
+	//{"tmpname", func(l *State) int {
+	//	f, err := ioutil.TempFile("", "lua_")
+	//	if err != nil {
+	//		Errorf(l, "unable to generate a unique filename")
+	//	}
+	//	defer f.Close()
+	//	l.PushString(f.Name())
+	//	return 1
+	//}},
 }
 
 // OSOpen opens the os library. Usually passed to Require.
